@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Forgot Password - Verifio</title>
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/forgot.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE (BRANDING) -->
+    <div class="left">
+        <div class="branding">
+            <img src="/static/images/logo.png" class="logo">
+            <h1 style="padding-left: 65px;">Verifio</h1>
+            <p style="padding-left: 35px;">The Truth Behind Paper</p>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE (FORM) -->
+    <div class="right">
+
+        <div class="form-box">
+
+            <h2>Forgot Password</h2>
+            <p class="sub-text">Enter your email to receive OTP</p>
+
+            <form method="POST" action="/send-otp">
+
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <p id="email-msg" style="padding-bottom: 5px;"></p>
+
+                <button type="submit" class="primary">Send OTP</button>
+
+                <p class="back">
+                    <a onclick="Login()" style="cursor: pointer">← Back</a>
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+<script>
+function SendOTP(){
+    window.location.href = "/send-otp";
+}
+function Login(){
+    window.location.href="/";
+}
+document.addEventListener("DOMContentLoaded" , function(){
+    const msg = document.getElementById('email-msg');
+    const emailInput = document.getElementById('email');
+    let emailValid = false;
+
+    function checkEmail(){
+        let email = emailInput.value;
+
+        if(!email){
+            msg.innerText="";
+            emailValid = false;
+            return;
+        }
+
+        fetch('/check-forgot-email' , {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({email:email})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(!data.exists){
+                msg.innerText = "The account cannot be found.";
+                msg.style.color = "red";
+                emailValid = false;
+            }
+            else if (data.auth_type !== "local") {
+                console.log(data);
+                msg.innerText = "This account uses " + data.auth_type + " login.";
+                msg.style.color = "red";
+                emailValid = false;
+            }
+            else{
+                msg.innerText = "";
+                emailValid = true;
+            }
+        })
+        .catch(err => console.log(err));
+    }
+
+
+    emailInput.addEventListener('blur' , checkEmail );
+    emailInput.addEventListener('input' , checkEmail );
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", function(e){
+        if (!emailValid) {
+            e.preventDefault();
+            msg.innerText = "Please enter a valid local account email.";
+            msg.style.color = "red";
+        }
+    });
+});
+</script>
+</body>
+</html>

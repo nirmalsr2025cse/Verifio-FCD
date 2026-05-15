@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Verify OTP - Verifio</title>
+
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/otp.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="left">
+        <div class="branding">
+            <img src="/static/images/logo.png" class="logo">
+            <h1 style="padding-left: 65px;">Verifio</h1>
+            <p style="padding-left: 35px;">The Truth Behind Paper</p>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right">
+
+        <div class="form-box">
+
+            <h2>Verify OTP</h2>
+            <p class="sub-text">Enter the 6-digit OTP sent to your email</p>
+
+            <form method="POST" action="/verify-otp">
+
+                <div class="otp-box">
+                    <input type="text" maxlength="1" name="otp1" required>
+                    <input type="text" maxlength="1" name="otp2" required>
+                    <input type="text" maxlength="1" name="otp3" required>
+                    <input type="text" maxlength="1" name="otp4" required>
+                    <input type="text" maxlength="1" name="otp5" required>
+                    <input type="text" maxlength="1" name="otp6" required>
+                </div>
+
+                {% if error %}
+                    <p style="color:red; text-align:center; padding-bottom: 10px">{{ error }}</p>
+                {% endif %}
+
+                <button type="submit" class="primary">Verify OTP</button>
+
+            </form>
+
+            <p class="back">
+                <a onclick="ForgotPassword()" style="cursor: pointer">← Back</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+// Auto move to next box
+const inputs = document.querySelectorAll(".otp-box input");
+
+inputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+    });
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && index > 0 && input.value === "") {
+            inputs[index - 1].focus();
+        }
+    });
+});
+function ForgotPassword(){
+    window.location.href="/forgot-password";
+}
+</script>
+
+</body>
+</html>

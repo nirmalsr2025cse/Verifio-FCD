@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verifio Auth</title>
+    <link rel="icon" href="/static/images/logo.png">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="left">
+        <div class="branding">
+            <img src="/static/images/logo.png" class="logo" alt="Verifio Logo">
+            <h1>Verifio</h1>
+            <p>The Truth Behind The Paper</p>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right">
+        <div class="form-box">
+
+            <div class="tabs">
+                <div class="slider"></div>
+
+                <button class="active" onclick="showForm('login', this)">Login</button>
+                <button onclick="showForm('signup', this)">Sign Up</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="login" class="form active" method = "POST" action = "/login">
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <p id="email-msg" style="font-size:14px;"></p>
+                <div class="password-box">
+                    <input type="password" name = "password" id="login-password" placeholder="Password" required>
+                    <i class="fa-solid fa-eye" onclick="togglePassword(this)"></i>
+                </div>
+                <p id="password-msg" style="font-size:14px;"></p>
+                <button type = "submit" class="primary">Login</button>
+                <div class="options">
+                    <label><input type="checkbox" name="remember"> Remember Me</label>
+                    <a onclick="Forgot()" style="cursor: pointer" class="forgot">Forgot Password?</a>
+                </div>
+            </form>
+
+            <!-- SIGNUP FORM -->
+            <form id="signup" class="form" method="POST" action="/signup">
+                <div style="display: flex; gap: 33px;">
+                    <input type="text" name="first_name" placeholder="First Name" style="flex:1;" required>
+                    <input type="text" name="last_name" placeholder="Last Name" style="flex: 3;" required>
+                </div>
+                <input type="email" name="email" placeholder="Email" required>
+                <p id="signup-email-msg" style="color:red; font-size:14px;"></p>
+                <div class="password-box">
+                    <input type="password" name = "password" id="signup-password" placeholder="Password" required>
+                    <i class="fa-solid fa-eye" onclick="togglePassword(this)"></i>
+                </div>
+                <button type="submit" class="primary">Sign Up</button>
+            </form>
+
+            <div class="divider">OR</div>
+
+            <!-- SOCIAL BUTTONS -->
+            <div class="socials">
+                <button type="button" onclick="googleLogin()">
+                    <img src="https://www.svgrepo.com/show/303108/google-icon-logo.svg" class="g-icon">
+                    Google
+                </button>
+                <button type="button" onclick="microsoftLogin()">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" class="ms-icon">
+                    Microsoft
+                </button>
+                <button type="button" onclick="githubLogin()"><i class="fa-brands fa-github"></i> GitHub</button>
+                <button type="button" onclick="discordLogin()">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" class="ds-icon">
+                    Discord
+                </button>
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+
+<script>
+function showForm(type, el) {
+    document.querySelectorAll(".form").forEach(f => f.classList.remove("active"));
+    document.getElementById(type).classList.add("active");
+
+    document.querySelectorAll(".tabs button").forEach(btn => btn.classList.remove("active"));
+    el.classList.add("active");
+
+    const slider = document.querySelector(".slider");
+
+    if (type === "signup") {
+        slider.style.left = "50%";
+    } else {
+        slider.style.left = "4px";
+    }
+}
+function togglePassword(icon) {
+    let input = icon.previousElementSibling;
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+function showForm(type, el) {
+    document.querySelectorAll(".form").forEach(f => f.classList.remove("active"));
+    document.getElementById(type).classList.add("active");
+
+    document.querySelectorAll(".tabs button").forEach(btn => btn.classList.remove("active"));
+    el.classList.add("active");
+
+    const slider = document.querySelector(".slider");
+
+    if (type === "signup") {
+        slider.style.left = "50%";
+    } else {
+        slider.style.left = "4px";
+    }
+}
+function googleLogin(){
+    window.location.href = "/google-login";
+}
+function microsoftLogin(){
+    window.location.href = "/microsoft-login";
+}
+function githubLogin(){
+    window.location.href = "/github-login";
+}
+function discordLogin(){
+    window.location.href = "/discord-login";
+}
+function Forgot(){
+    window.location.href = "/forgot-password";
+}
+document.addEventListener("DOMContentLoaded", function () { //AJAX + API integration
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("login-password");
+    const msg = document.getElementById("email-msg");
+    const pass_msg = document.getElementById("password-msg")
+    const form = document.getElementById("login");
+
+    let emailValid = false;
+
+    function checkEmail() {
+        let email = emailInput.value;
+
+        if (!email) {
+            msg.innerText = "";
+            emailValid = false;
+            return;
+        }
+
+        fetch("/check-email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.exists) {
+                msg.innerText = "This account cannot be found. Please use a different account or sign up for a new account.";
+                emailValid = true;
+                msg.style.color = "red";
+            }
+            else{
+                msg.innerText="";
+                emailValid=true;
+            }
+        })
+        .catch(err => console.log(err));
+    }
+
+    emailInput.addEventListener("blur", checkEmail);
+
+    emailInput.addEventListener("input", checkEmail);
+
+    let allowSubmit = false;
+
+    form.addEventListener("submit", function(e) {
+
+        if(allowSubmit) return;
+
+        e.preventDefault();
+
+        let email = emailInput.value;
+        let password = passwordInput.value;
+
+        fetch("check-login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: email , password: password })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (!data.success) {
+                if(data.type == "email"){
+                    msg.innerText = "This account cannot be found.";
+                    msg.style.color = "red";
+                }
+                else if(data.type == "password"){
+                    pass_msg.innerText = "Invalid Password";
+                    pass_msg.style.color = "red";
+                }
+            } else {
+                allowSubmit = true;
+                form.submit()
+            }
+        })
+        .catch(err => console.log(err));
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const signupForm = document.getElementById("signup");
+    const signupEmail = signupForm.querySelector("input[name='email']");
+    const msg = document.getElementById("signup-email-msg");
+
+    let allowSignup = false;
+
+    function checkSignupEmail() {
+
+        let email = signupEmail.value;
+
+        if (!email) {
+            msg.innerText = "";
+            allowSignup = false;
+            return;
+        }
+
+        fetch("/check-email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.exists) {
+                msg.innerText = "User already exists with this email.";
+                allowSignup = false;
+            } else {
+                msg.innerText = "";
+                allowSignup = true;
+            }
+
+        });
+    }
+
+    signupEmail.addEventListener("blur", checkSignupEmail);
+    signupEmail.addEventListener("input", checkSignupEmail);
+
+    signupForm.addEventListener("submit", function(e) {
+
+        if (allowSignup) return;
+
+        e.preventDefault();
+
+        msg.innerText = "User already exists with this email.";
+    });
+
+});
+</script>
+
+</body>
+</html>

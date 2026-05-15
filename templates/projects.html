@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Projects - Verifio</title>
+
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/projects.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Verifio</h2>
+
+        <ul>
+            <li onclick="Home()"><i class="fa fa-home"></i> Home</li>
+            <li class="active"><i class="fa fa-folder"></i> Projects</li>
+            <li onclick="Sheet()"><i class="fa fa-table"></i> Sheet</li>
+            <li onclick="Analytics()"><i class="fa fa-chart-pie"></i> Analytics</li>
+            <li onclick="Verified()" ><i class="fa fa-check-circle"></i> Verified</li>
+            <li onclick="Fake()"><i class="fa fa-times-circle"></i> Fake</li>
+            <li  onclick="Profile()"><i class="fa fa-user"></i> Profile</li>
+            <li onclick="Logout()"><i class="fa fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <div class="projects-header">
+            <h1 style="padding-bottom: 20px;">All Projects</h1>
+            <input type="text" id="searchBox" placeholder="Search your projects...">
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <button class="active">All</button>
+            <button>Recent</button>
+        </div>
+
+        <div class="projects-grid">
+            {% if projects %}
+                {% for p in projects %}
+                    <form action="/create_project_page" method="POST" style="display:inline;">
+                        <input type="hidden" name="project" value="{{p.project_name}}">
+                        <div class="project-card" data-date="{{p.created_at}}" style="cursor: pointer;" onclick="this.closest('form').submit()">
+                            <div class="thumb"></div>
+                            <h3>{{p.project_name}}</h3>
+                            <p>Created At : {{p.created_at}}</p>
+                        </div>
+                    </form>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+<script>
+const buttons = document.querySelectorAll(".filters button");
+const projects = Array.from(document.querySelectorAll(".project-card"));
+
+const searchBox = document.getElementById("searchBox");
+let activeFilter = "All";
+
+searchBox.addEventListener("input", applyFilter);
+
+buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        activeFilter = btn.innerText;
+
+        applyFilter();
+    });
+});
+
+function applyFilter() {
+
+    const value = searchBox.value.toLowerCase().trim();
+
+    let visibleProjects = [];
+
+    projects.forEach(p => {
+        const name = p.querySelector("h3").innerText.toLowerCase();
+
+        if (name.split(" ").some(word => word.startsWith(value))) {
+            visibleProjects.push(p);
+        } else {
+            p.closest("form").style.display = "none";
+        }
+    });
+
+    if (activeFilter === "Recent") {
+        visibleProjects.forEach((p, index) => {
+            if (index < 4) {
+                p.closest("form").style.display = "";
+            } else {
+                p.closest("form").style.display = "none";
+            }
+        });
+    } else {
+        visibleProjects.forEach(p => {
+            p.closest("form").style.display = "";
+        });
+    }
+}
+
+function Home() {
+    window.location.href = "/home";
+}
+function Sheet() {
+    window.location.href = "/sheet";
+}
+function Analytics(){
+    window.location.href = "/analytics";
+}
+function Verified(){
+    window.location.href = "/verified";
+}
+function Fake(){
+    window.location.href = "/fake";
+}
+
+function Profile(){
+    window.location.href = "/profile";
+}
+function Logout(){
+    window.location.href = "/logout";
+}
+</script>
+</body>
+</html>

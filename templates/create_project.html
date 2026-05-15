@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Project - Verifio</title>
+
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/create_project.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Verifio</h2>
+
+        <ul>
+            <li onclick="Home()"><i class="fa fa-home"></i> Home</li>
+            <li onclick="Projects()" class="active"><i class="fa fa-folder"></i> Projects</li>
+            <li onclick="Sheet()"><i class="fa fa-table"></i> Sheet</li>
+            <li onclick="Analytics()"><i class="fa fa-chart-pie"></i> Analytics</li>
+            <li onclick="Verified()"><i class="fa fa-check-circle"></i> Verified</li>
+            <li onclick="Fake()"><i class="fa fa-times-circle"></i> Fake</li>
+            <li  onclick="Profile()"><i class="fa fa-user"></i> Profile</li>
+            <li onclick="Logout()"><i class="fa fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <h1 style="padding-bottom: 10px; padding-top: 40px;">Verify {{project_name}} Project Certificate</h1>
+
+        <div class="form-box">
+            <input type="text" id="certId" placeholder="Certificate ID">
+            <input type="text" id="name" placeholder="Name">
+            <form autocomplete="off">
+                <input list="college_list" id="college" placeholder="Select or type College">
+            </form>
+            <datalist id="college_list">
+                {% for c in colleges %}
+                    <option value="{{c}}"></option>
+                {% endfor %}
+            </datalist>
+            <input type="text" id="year" placeholder="Passed Out Year">
+
+            <p class="or">OR</p>
+
+            <input type="file" id="fileUpload" accept="application/pdf">
+
+            <p id="error" class="error"></p>
+
+            <button type="button" onclick="submitForm()">Verify</button>
+            <div id="resultBox" class="result-box" style="display:none;">
+                <h3>Result</h3>
+                <p id="resultText"></p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function Home() {
+    window.location.href = "/home";
+}
+function Projects(){
+    window.location.href = "/projects";
+}
+function Sheet() {
+    window.location.href = "/sheet";
+}
+function Analytics(){
+    window.location.href = "/analytics";
+}
+function Verified(){
+    window.location.href = "/verified";
+}
+function Fake(){
+    window.location.href = "/fake";
+}
+
+function Profile(){
+    window.location.href = "/profile";
+}
+function Logout(){
+    window.location.href = "/logout";
+}
+function clearForm() {
+    document.getElementById("certId").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("college").value = "";
+    document.getElementById("year").value = "";
+    document.getElementById("fileUpload").value = null;
+}
+
+function clearResult() {
+    document.getElementById("resultText").innerText = "";
+    document.getElementById("resultBox").style.display = "none";
+    document.getElementById("error").innerText = "";
+}
+
+async function submitForm() {
+
+    let certId = document.getElementById("certId").value;
+    let name = document.getElementById("name").value;
+    let college = document.getElementById("college").value;
+    let year = document.getElementById("year").value;
+
+    let error = document.getElementById("error");
+    let resultBox = document.getElementById("resultBox");
+    let resultText = document.getElementById("resultText");
+    let fileInput = document.getElementById("fileUpload");
+    let file = fileInput.files[0];
+
+    let allFields = certId && name && college && year;
+
+    if (!allFields && !file) {
+        error.innerText = "Fill all fields OR Upload PDF";
+        return;
+    }
+
+    if (file) {
+
+        if (file.type !== "application/pdf" || !file.name.endsWith(".pdf")) {
+            error.innerText = "Only PDF files allowed";
+            return;
+        }
+
+        error.innerText = "";
+        resultText.style.color = "black";
+        resultText.innerText = "⏳ Extracting & Verifying...";
+        resultBox.style.display = "block";
+
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("project_name", "{{project_name}}");
+
+        try {
+            let res = await fetch("/verify_pdf", {
+                method: "POST",
+                body: formData
+            });
+
+            let data = await res.json();
+
+            if (data.error) {
+                error.innerText = data.error;
+                resultText.innerText = "";
+                resultBox.style.display = "none";
+                return;
+            }
+
+            setTimeout(() => {
+                if (data.success) {
+                    resultText.innerText = "Original Certificate";
+                    resultText.style.color = "green";
+                } else {
+                    resultText.innerText = "Fake Certificate";
+                    resultText.style.color = "red";
+                }
+                clearForm();
+            }, 1000);
+
+        } catch (err) {
+            error.innerText = "Something went wrong";
+            resultText.innerText="";
+            resultBox.style.display = "none";
+        }
+
+        return;
+    }
+
+    error.innerText = "";
+    resultText.style.color = "black";
+    resultText.innerText = "Verifying...";
+    resultBox.style.display = "block";
+
+    let data = {
+        certId,
+        name,
+        college,
+        year,
+        project_name: "{{project_name}}"
+    };
+
+    try {
+        let res = await fetch("/verify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        let result = await res.json();
+
+        setTimeout(() => {
+            if (result.success) {
+                resultText.innerText = "Original Certificate";
+                resultText.style.color = "green";
+            } else {
+                resultText.innerText = "Fake Certificate";
+                resultText.style.color = "red";
+            }
+            clearForm();
+        }, 1000);
+
+    } catch (err) {
+        error.innerText = "Something went wrong";
+        resultText.innerText = "";
+        resultBox.style.display = "none";
+    }
+}
+</script>
+
+</body>
+</html>

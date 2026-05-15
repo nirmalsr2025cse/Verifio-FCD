@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reset Password - Verifio</title>
+
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/reset.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE -->
+    <div class="left">
+        <div class="branding">
+            <img src="/static/images/logo.png" class="logo">
+            <h1 style="padding-left: 65px;">Verifio</h1>
+            <p style="padding-left: 35px;">The Truth Behind Paper</p>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right">
+
+        <div class="form-box">
+
+            <h2>Reset Password</h2>
+            <p class="sub-text">Enter your new password</p>
+
+            <form method="POST" action="/reset-logged-password">
+
+                <!-- New Password -->
+                <div class="password-box">
+                    <input type="password" name="password" placeholder="New Password" required>
+                    <i class="fa-solid fa-eye" onclick="togglePassword(this)"></i>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="password-box">
+                    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                    <i class="fa-solid fa-eye" onclick="togglePassword(this)"></i>
+                </div>
+
+                {% if error %}
+                    <p style="color:red; text-align:center; padding-bottom: 10px">{{ error }}</p>
+                {% endif %}
+                <button type="submit" class="primary">Reset Password</button>
+
+            </form>
+
+            <p class="back">
+                <a onclick="Profile()" style="cursor: pointer">← Back to Profile</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function togglePassword(icon) {
+    let input = icon.previousElementSibling;
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+function Profile(){
+    window.location.href = '/profile';
+}
+</script>
+
+</body>
+</html>

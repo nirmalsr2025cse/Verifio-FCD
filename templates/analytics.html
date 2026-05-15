@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ratio - Verifio</title>
+
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/analytics.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Verifio</h2>
+
+        <ul>
+            <li onclick="Home()"><i class="fa fa-home"></i> Home </li>
+            <li onclick="Projects()"><i class="fa fa-folder"></i> Projects </li>
+            <li onclick="Sheet()"><i class="fa fa-table"></i> Sheet </li>
+            <li class="active"><i class="fa fa-chart-pie"></i> Analytics </li>
+            <li onclick="Verified()"><i class="fa fa-check-circle"></i> Verified </li>
+            <li onclick="Fake()"><i class="fa fa-times-circle"></i> Fake</li>
+            <li onclick="Profile()"><i class="fa fa-user"></i> Profile </li>
+            <li onclick="Logout()"><i class="fa fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <h1>Verification Insights</h1>
+
+        <!-- TOP STATS -->
+        <div class="stats">
+
+            <div class="card">
+                <h3>Total Projects</h3>
+                <p>{{ projects_count }}</p>
+            </div>  
+
+            <div class="card">
+                <h3><i class="fa fa-percent"></i> Accuracy</h3>
+                <p>{{accuracy | round(2) }}%</p>
+            </div>
+
+        </div>
+
+        <!-- PROJECT RATIOS -->
+        <div class="projects">
+
+            {% if projects %}
+                {% for p in projects %}
+                    <div class="ratio-card">
+                        <h3>{{ p.project_name }}</h3>
+
+                        <div class="bar">
+                            <div class="verified" data-percent="{{ ((p.verified_count/p.certificates_count)*100) | round(2) if p.certificates_count>0 else 0 }}"></div>
+                        </div>
+
+                        <p id="percent" style="padding-top: 10px;">{{ ((p.verified_count/p.certificates_count)*100) | round(2) if p.certificates_count > 0 else 0 }}% Verified</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+document.querySelectorAll(".verified").forEach(bar => {
+
+    let percent = parseInt(bar.getAttribute("data-percent"));
+
+    bar.style.width = percent + "%";
+
+    if (percent >= 85) {
+        bar.classList.add("green");
+    }
+    else if (percent >= 50) {
+        bar.classList.add("yellow");
+    }
+    else {
+        bar.classList.add("red");
+    }
+
+});
+function Home() {
+    window.location.href = "/home";
+}
+function Sheet() {
+    window.location.href = "/sheet";
+}
+function Projects(){
+    window.location.href = "/projects";
+}
+function Verified(){
+    window.location.href = "/verified";
+}
+function Fake(){
+    window.location.href = "/fake";
+}
+function Profile(){
+    window.location.href = "/profile";
+}
+function Logout(){
+    window.location.href = "/logout";
+}
+</script>
+</body>
+</html>

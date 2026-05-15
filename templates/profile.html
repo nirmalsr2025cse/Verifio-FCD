@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile - Verifio</title>
+
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/profile.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+        <h2>Verifio</h2>
+        <ul>
+            <li onclick="Home()"><i class="fa fa-home"></i> Home</li>
+            <li onclick="Projects()"><i class="fa fa-folder"></i> Projects</li>
+            <li onclick="Sheet()"><i class="fa fa-table"></i> Sheet</li>
+            <li onclick="Analytics()"><i class="fa fa-chart-pie"></i> Analytics</li>
+            <li onclick="Verified()"><i class="fa fa-check-circle"></i> Verified</li>
+            <li onclick="Fake()"><i class="fa fa-times-circle"></i> Fake</li>
+            <li class="active"><i class="fa fa-user"></i> Profile</li>
+            <li onclick="Logout()"><i class="fa fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <div class="main">
+
+        <h1>My Profile</h1>
+
+        <div class="profile-layout">
+
+            <div class="profile-center">
+
+                <div class="profile-image">
+                    <img id="profilePreview"
+                         src="{% if profile_image_id %}/get_profile_image/{{ profile_image_id }}{% else %}/static/images/default.png{% endif %}">
+                </div>
+
+                <p style="padding-left:10px;">Upload Under 2MB</p>
+
+                <button class="btn" onclick="selectImage()">Change Profile Photo</button>
+                <input type="file" id="fileInput" accept="image/png, image/jpeg" hidden>
+
+                <button style="background:#605B51" class="btn secondary" onclick="deleteImage()">Remove Profile Photo</button>
+
+                {% if Auth_Type == 'local' %}
+                <button class="btn secondary" onclick="ChangePassword()">Change Password</button>
+                {% endif %}
+
+            </div>
+
+            <div class="profile-details">
+
+                <div class="row">
+                    <div class="field">
+                        <label>First Name</label>
+                        <input type="text" value="{{First_Name}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Last Name</label>
+                        <input type="text" value="{{Last_Name}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="text" value="{{Email}}" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>User ID</label>
+                        <input type="text" value="{{ID}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Account Type</label>
+                        <input type="text" value="{{Auth_Type}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Created At</label>
+                        <input type="text" value="{{Date}}" readonly>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Total Projects</label>
+                        <input type="text" value="{{projects}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Certificates</label>
+                        <input type="text" value="{{Certificates}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Accuracy</label>
+                        <input type="text" value="{{Accuracy}}%" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Verified</label>
+                        <input type="text" value="{{Verified}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Fake</label>
+                        <input type="text" value="{{Fake}}" readonly>
+                    </div>
+
+                    <div class="field">
+                        <label>Ratio</label>
+                        <input type="text" value="{{Ratio}}" readonly>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Crop Modal -->
+<div id="cropModal" class="crop-modal">
+    <div class="crop-box">
+        <img id="cropImage">
+        <br><br>
+        <button class="btn" style="margin-left: 30px;" onclick="cropAndUpload()">Upload</button>
+        <button class="btn" style="margin-left: 30px;" onclick="cancelCrop()">Cancel</button>
+    </div>
+</div>
+
+<script>
+
+let cropper;
+
+function selectImage() {
+    document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change", function(e) {
+
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if(file.size > 2*1024*1024){
+        alert("Upload image under 2MB");
+        return;
+    }
+
+    const url = URL.createObjectURL(file);
+
+    const image = document.getElementById("cropImage");
+    image.src = url;
+
+    document.getElementById("cropModal").style.display = "flex";
+
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(image, {
+        aspectRatio: 1,
+        viewMode: 1,
+        background: false
+    });
+    e.target.value = "";
+});
+
+function cropAndUpload() {
+
+    const canvas = cropper.getCroppedCanvas({
+        width: 300,
+        height: 300
+    });
+
+    canvas.toBlob(blob => {
+
+        const formData = new FormData();
+        formData.append("image", blob, "profile.png");
+
+        fetch("/upload_profile_photo", {
+            method: "POST",
+            body: formData
+        })
+        .then(() => {
+            document.getElementById("profilePreview").src = canvas.toDataURL();
+        });
+
+    });
+
+    document.getElementById("cropModal").style.display = "none";
+}
+
+function cancelCrop() {
+
+    document.getElementById("cropModal").style.display = "none";
+
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+
+    document.getElementById("fileInput").value = "";
+
+}
+
+function deleteImage() {
+    const img = document.getElementById("profilePreview").src;
+
+    if(img.includes("default.png")){
+        alert("No Profile Image to Remove");
+        return;
+    }
+
+    fetch("/delete_profile_photo",
+        { method: "POST" }
+    )
+    .then(() => {
+        document.getElementById("profilePreview").src = "/static/images/default.png";
+    })
+    .catch(() => alert("Delete failed"));
+}
+
+function Home(){
+    window.location.href="/home";
+}
+function Projects(){
+    window.location.href="/projects";
+}
+function Sheet(){
+    window.location.href="/sheet";
+}
+function Analytics(){
+    window.location.href="/analytics";
+}
+function Verified(){
+    window.location.href="/verified";
+}
+function Fake(){
+    window.location.href="/fake";
+}
+function Logout(){
+    window.location.href="/logout";
+}
+function ChangePassword(){
+    window.location.href="/change-password";
+}
+
+</script>
+
+</body>
+</html>

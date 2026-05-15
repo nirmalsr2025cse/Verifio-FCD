@@ -1,0 +1,301 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #d9d9d9);
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* LEFT SIDE */
+.left {
+    padding-left: 100px;
+    flex: 0.7;
+    background: none;
+    /*display: flex;*/
+    align-items: center;
+    justify-content: center;
+}
+
+.branding {
+    text-align: center;
+    padding-left: 200px;
+}
+
+.logo {
+    margin-top: 125px;
+    height: 300px;
+    width: 350px;
+    border: 0px;
+}
+
+.branding h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: #333;
+}
+
+.branding p {
+    font-size: 18px;
+    color: #555;
+}
+
+/* RIGHT SIDE */
+.right {
+    padding-right: 200px;
+    flex: 1.3;
+    display: flex;
+    background: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-box {
+    height: 550px;
+    width: 550px;
+    padding: 40px;
+    background:  white;
+    padding: 65px;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+}
+
+/* TABS */
+.tabs {
+    position: relative;
+    display: flex;
+    background: #eee;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+/* SLIDER */
+.slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: #333;
+    border-radius: 8px;
+    transition: 0.5s ease;
+}
+
+/* BUTTONS */
+.tabs button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 1;
+    color: #333;
+}
+
+/* ACTIVE TEXT */
+.tabs button.active {
+    color: white;
+}
+
+/* FORM */
+
+
+.form {
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+
+    transition: opacity 0.7s ease;
+}
+
+.form.active {
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+
+.password-box {
+    position: relative;
+    width: 100%;
+}
+
+.password-box input {
+    width: 100%;
+    padding: 12px;
+    padding-right: 40px;   /* space for eye icon */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.password-box i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+}
+
+input.error {
+    border: 1px solid red;
+}
+
+.error-text {
+    color: red;
+    font-size: 12px;
+}
+
+.form input {
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.form input:focus {
+    border-color: #333;
+    outline: none;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.forgot {
+    text-decoration: none;
+    color: #333;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+/* PRIMARY BUTTON */
+.primary {
+    margin-top: 10px;
+    padding: 12px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.primary:hover {
+    background: #555;
+}
+
+/* DIVIDER */
+.divider {
+    text-align: center;
+    margin: 15px 0;
+    color: #999;
+}
+
+/* SOCIAL BUTTONS */
+.socials {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.socials button i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+.socials button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 12px;              /* FIX: proper padding */
+    border-radius: 8px;         /* keep rounded shape */
+    border: 1px solid #ddd;
+    background: white;
+
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.socials button:hover {
+    background: #e6e6e6;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+/* Google */
+.socials button:nth-child(1) {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    color: #444;
+}
+
+.socials button:nth-child(1) i {
+    color: #db4437;   /* Google red */
+}
+
+/* Microsoft */
+.socials button:nth-child(2) {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    color: #444;
+}
+
+.socials button:nth-child(2) i {
+    color: #00a4ef;   /* Microsoft blue */
+}
+
+/* GitHub */
+.socials button:nth-child(3) {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    color: #444;
+}
+
+/* Apple */
+.socials button:nth-child(4) {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    color: #444;    
+}
+
+.g-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.ms-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.ds-icon{
+    width: 18px;
+    height: 18px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .left {
+        display: none;
+    }
+}

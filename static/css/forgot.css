@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #d9d9d9);
+}
+
+/* LAYOUT */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* LEFT SIDE */
+.left {
+    flex: 0.7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    height: 280px;
+    width: 280px;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+.branding{
+    padding-left: 300px;
+}
+
+.branding h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: #222;
+    margin: 0;
+    /* Removed padding-left: 85px; */
+}
+
+.branding p {
+    font-size: 20px;
+    color: #444;
+    margin-top: 5px;
+    /* Removed padding-left: 55px; */
+}
+
+/* RIGHT SIDE */
+.right {
+    flex: 1.3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* FORM BOX */
+.form-box {
+    height: 350px;
+    width: 500px;
+    padding: 80px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+/* TITLE */
+.form-box h2 {
+    margin-bottom: 10px;
+}
+
+.sub-text {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* INPUT */
+.form-box input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* BUTTON */
+.primary {
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.primary:hover {
+    background: #555;
+}
+
+/* BACK LINK */
+.back {
+    margin-top: 15px;
+}
+
+.back a:hover {
+    text-decoration: underline;
+}
+
+.back a {
+    text-decoration: none;
+    color: #333;
+}
+
+.back a:hover {
+    text-decoration: underline;
+}

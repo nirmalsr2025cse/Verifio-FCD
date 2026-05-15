@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard - Home</title>
+<link rel="icon" href="/static/images/logo.png">
+<link rel="stylesheet" href="/static/css/home.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Verifio</h2>
+
+        <ul>
+            <li class="active"><i class="fa fa-home"></i> Home</li>
+            <li onclick="Projects()"><i class="fa fa-folder"></i> Projects</li>
+            <li onclick="Sheet()"><i class="fa fa-table"></i> Sheet</li>
+            <li onclick="Analytics()"><i class="fa fa-chart-pie"></i> Analytics</a></li>
+            <li onclick="Verified()"><i class="fa fa-check-circle"></i> Verified</li>
+            <li onclick="Fake()"><i class="fa fa-times-circle"></i> Fake</li>
+            <li onclick="Profile()"><i class="fa fa-user"></i> Profile</li>
+            <li onclick="Logout()"><i class="fa fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <div class="top" style="padding-bottom: 5px;">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage your verification projects</p>
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards" style="padding-bottom: 5px;">
+            <div class="card projects">
+                <h3>Projects</h3>
+                <p style="padding-top: 5px;">{{projects_count}}</p>
+            </div>
+            <div class="card verified">
+                <h3>Verified</h3>
+                <p style="padding-top: 5px;">{{verified_count}}</p>
+            </div>
+
+            <div class="card fake">
+                <h3>Fake</h3>
+                <p style="padding-top: 5px;">{{fake_count}}</p>
+            </div>
+
+        </div>
+
+        <!-- CREATE PROJECT -->
+        <div class="create">
+            <h2 style="padding-bottom: 25px;">Create New Project</h2>
+            <form style="display: flex" id="project-form">
+                <input type="text" id="project-name" name="project_name" placeholder="Project Name">
+                <button onclick="createProject(event)">Create</button>
+            </form>
+            <p id="error-msg" class = "error-msg" style="color: red; font-size: 14px; padding-top: 10px;"></p>
+        </div>
+
+        <!-- PROJECT GRID -->
+        <div style="background-color: white; border-radius: 25px; padding-bottom: 20px; padding: 30px;">
+            <h1 style="padding-bottom: 30px; padding-left: 14px;">All Projects</h1>
+            <div class="projects-grid">
+                {% if projects %}
+                    {% for p in projects %}
+                        <form action="/create_project_page" method="POST" style="display:inline;">
+                            <input type="hidden" name="project" value="{{p.project_name}}">
+                            <div class="p-card" style="cursor: pointer;" onclick="this.closest('form').submit()">
+                                <i class="fa fa-trash delete-icon" onclick="deleteProject(event, '{{p.project_name}}')"></i>
+                                <div>
+                                    <img src="/static/images/image.png" class="project-logo">
+                                    <h3 style="text-align: center; padding-top: 5px;">
+                                        {{p.project_name}}
+                                    </h3>
+                                </div>
+                            </div>
+                        </form>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function Projects(){
+    window.location.href = "/projects";
+}
+function Sheet() {
+    window.location.href = "/sheet";
+}
+function Analytics(){
+    window.location.href = "/analytics";
+}
+function Verified(){
+    window.location.href = "/verified";
+}
+function Fake(){
+    window.location.href = "/fake";
+}
+
+function Profile(){
+    window.location.href = "/profile";
+}
+function Logout(){
+    window.location.href = "/logout";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("project-name");
+    const error = document.getElementById("error-msg");
+
+    input.addEventListener("input", function () {
+        if (input.value.trim() !== "") {
+            error.style.display = "none";
+        }
+    });
+
+});
+
+function createProject(event) {
+
+    event.preventDefault();
+
+    const input = document.getElementById("project-name");
+    const error = document.getElementById("error-msg");
+
+    const name = input.value.trim();
+
+    if (name === "") {
+        error.innerText = "Invalid Project Name";
+        error.style.display = "block";
+        return;
+    }
+
+    fetch("/check-project-name",{
+        method: "POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({name:name})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.exists){
+            error.innerText = "Project Already Created";
+            error.style.display = "block";
+            return;
+        }
+
+        error.style.display = "none";
+
+        const form = document.getElementById("project-form");
+
+        input.value = name;
+
+        form.method = "POST";
+        form.action = "/create_project";
+
+        form.submit();
+    })
+    .catch(err => console.log(err));
+}
+function deleteProject(event, project_name) {
+
+    event.stopPropagation();
+
+    if (!confirm("Are you sure you want to delete this project?")) {
+        return;
+    }
+
+    fetch("/delete_project", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ project_name: project_name })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert("Delete failed");
+        }
+    })
+    .catch(err => console.log(err));
+}
+</script>
+</body>
+</html>
