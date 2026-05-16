@@ -89,6 +89,30 @@
         </div>
     </div>
 </div>
+<!-- DELETE POPUP -->
+<div id="delete-popup" class="popup-overlay">
+
+    <div class="delete-box">
+
+        <h2>Delete Project</h2>
+
+        <p>Are you sure you want to delete this project?</p>
+
+        <div class="popup-buttons">
+
+            <button class="yes-btn" id="confirm-delete">
+                Yes
+            </button>
+
+            <button class="cancel-btn" onclick="closePopup()">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 <script>
 function Projects(){
     window.location.href = "/projects";
@@ -169,31 +193,52 @@ function createProject(event) {
     })
     .catch(err => console.log(err));
 }
-function deleteProject(event, project_name) {
+let selectedProject = "";
+
+function deleteProject(event, project_name){
 
     event.stopPropagation();
 
-    if (!confirm("Are you sure you want to delete this project?")) {
-        return;
-    }
+    selectedProject = project_name;
+
+    document.getElementById("delete-popup").style.display = "flex";
+}
+
+function closePopup(){
+    document.getElementById("delete-popup").style.display = "none";
+}
+
+document.getElementById("confirm-delete").addEventListener("click", function(){
 
     fetch("/delete_project", {
+
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ project_name: project_name })
+
+        body: JSON.stringify({
+            project_name: selectedProject
+        })
+
     })
+
     .then(res => res.json())
+
     .then(data => {
-        if (data.success) {
+
+        if(data.success){
             location.reload();
-        } else {
-            alert("Delete failed");
         }
+        else{
+            alert("Delete Failed");
+        }
+
     })
+
     .catch(err => console.log(err));
-}
+});
 </script>
 </body>
 </html>
