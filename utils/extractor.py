@@ -1,6 +1,7 @@
 import re
 from pdf2image import convert_from_path
 import pytesseract
+import os
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
@@ -123,8 +124,8 @@ def extract_details(text6,text11):
     }
 
 def extract_text(pdf_path):
-
-    images = convert_from_path(pdf_path, poppler_path=r"C:\Program Files\poppler-25.12.0\Library\bin" , dpi=300)
+    if os.name == "nt":
+        images = convert_from_path(pdf_path, poppler_path=r"C:\Program Files\poppler-25.12.0\Library\bin" , dpi=300)
     text6 = ""
     text11 = ""
     for img in images:
