@@ -8,7 +8,7 @@ from dashboard.routes import dashboard
 
 app = Flask(__name__)
 app.secret_key = appConf["FLASK_SECRET"]
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 init_oauth(app)
 
