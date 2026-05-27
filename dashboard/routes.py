@@ -7,7 +7,6 @@ import io
 import os
 from flask import jsonify
 from datetime import date
-import pytesseract
 
 dashboard = Blueprint('dashboard',__name__)
 
@@ -287,7 +286,10 @@ def verify_pdf():
                 "success": False,
                 "details": details
             })
-
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        })
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)

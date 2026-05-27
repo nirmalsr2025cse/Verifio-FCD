@@ -1,7 +1,7 @@
 import re
 from pdf2image import convert_from_path
-import pytesseract
 import os
+import pytesseract
 
 if os.name == "nt":
     pytesseract.pytesseract.tesseract_cmd = (
@@ -127,18 +127,27 @@ def extract_details(text6,text11):
     }
 
 def extract_text(pdf_path):
-    if os.name == "nt":
 
+    if os.name == "nt":
         images = convert_from_path(
             pdf_path,
-            poppler_path=r"C:\poppler\Library\bin"
+            poppler_path=r"C:\Release-26.02.0-0\poppler-26.02.0\Library\bin"
         )
-
     else:
         images = convert_from_path(pdf_path)
+
     text6 = ""
     text11 = ""
+
     for img in images:
-        text6 += pytesseract.image_to_string(img, config="--oem 3 --psm 6")
-        text11 += pytesseract.image_to_string(img, config="--oem 3 --psm 11")
-    return text6,text11
+        text6 += pytesseract.image_to_string(
+            img,
+            config="--oem 3 --psm 6"
+        )
+
+        text11 += pytesseract.image_to_string(
+            img,
+            config="--oem 3 --psm 11"
+        )
+
+    return text6, text11
