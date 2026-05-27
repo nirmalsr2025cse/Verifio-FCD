@@ -1,6 +1,7 @@
 from openpyxl import Workbook, load_workbook
 from utils.db import Excel, excel_fs
 import os
+import tempfile
 
 def create_empty_excel(email, project_name):
 
@@ -45,7 +46,8 @@ def add_data_to_excel(email, project_name, new_data):
         return
 
     old_file_id = record["excel_file_id"]
-    temp_path = "temp.xlsx"
+    with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
+        temp_path = tmp.name
 
     try:
         file_data = excel_fs.get(old_file_id)

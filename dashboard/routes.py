@@ -7,6 +7,8 @@ import io
 import os
 from flask import jsonify
 from datetime import date
+import tempfile
+import traceback
 
 dashboard = Blueprint('dashboard',__name__)
 
@@ -219,7 +221,8 @@ def verify_pdf():
     if file.content_type != "application/pdf":
         return jsonify({"error": "Only PDF allowed"})
 
-    file_path = "temp.pdf"
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+        file_path = tmp.name
     file.save(file_path)
 
     try:
@@ -287,9 +290,8 @@ def verify_pdf():
                 "details": details
             })
     except Exception as e:
-        return jsonify({
-            "error": str(e)
-        })
+        traceback.print_exc()  # shows full stack trace in server logs
+        return jsonify({"error": str(e)})
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
