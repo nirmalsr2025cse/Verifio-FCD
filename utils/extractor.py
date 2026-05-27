@@ -134,7 +134,7 @@ def extract_text(pdf_path):
             poppler_path=r"C:\Release-26.02.0-0\poppler-26.02.0\Library\bin"
         )
     else:
-        images = convert_from_path(pdf_path)
+        images = convert_from_path(pdf_path, dpi=150)
 
     text6 = ""
     text11 = ""
@@ -149,5 +149,6 @@ def extract_text(pdf_path):
             img,
             config="--oem 3 --psm 11"
         )
+        img.close()
 
     return text6, text11
