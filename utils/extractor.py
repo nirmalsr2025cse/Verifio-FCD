@@ -123,7 +123,7 @@ def extract_details(text6,text11):
         "name": name,
         "cert_id": reg_no,
         "college": college,
-        "year": year
+        "year": years
     }
 
 def extract_text(pdf_path):
