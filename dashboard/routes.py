@@ -209,6 +209,10 @@ def verify():
 
 @dashboard.route('/verify_pdf', methods=["POST"])
 def verify_pdf():
+    import subprocess
+    result = subprocess.run(["tesseract", "--version"], capture_output=True, text=True)
+    print("Tesseract:", result.stdout)
+
     if 'user' not in session:
         return redirect(url_for('auth.index'))
 
