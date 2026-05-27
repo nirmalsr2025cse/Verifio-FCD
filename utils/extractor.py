@@ -117,13 +117,13 @@ def extract_details(text6,text11):
     if not year:
         year = fallback_year(text11)
 
-    years = re.findall(r"(20\d{2})", text11)
+    #years = re.findall(r"(20\d{2})", text11)
 
     return {
         "name": name,
         "cert_id": reg_no,
         "college": college,
-        "year": years
+        "year": year
     }
 
 def extract_text(pdf_path):
