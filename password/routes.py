@@ -15,10 +15,10 @@ def forgot_password():
 @password.route('/check-forgot-email' , methods=["POST"])
 def check_email():
     data = request.get_json()
-    email = data.get('email')
-
+    email = data.get('email').strip().lower()
+    print(email)
     user = FCD_collection.find_one({'email': email})
-
+    print(user)
     return jsonify({
         "exists": True if user else False,
         "auth_type": user.get("auth_type") if user else None
@@ -26,10 +26,10 @@ def check_email():
 
 @password.route('/send-otp', methods=['POST'])
 def send_otp():
-    email = request.form.get('email')
-
+    email = request.form.get('email').strip().lower()
+    print(email)
     user = FCD_collection.find_one({'email': email})
-
+    print(user)
     if not user:
         return render_template('forgot.html', error="Invalid Email Id")
 
